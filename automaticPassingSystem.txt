@@ -1,0 +1,159 @@
+#include <iostream>
+using namespace std;
+
+class Vehicle {
+private:
+    string ogsNo;
+    string name;
+    double balance;
+    int vehicleType;
+    int birthYear;
+    string gender;
+    string plateNumber;
+
+public:
+    Vehicle(string ogsNo, string name, double balance, int vehicleType, int birthYear, string gender, string plateNumber)
+        : ogsNo(ogsNo), name(name), balance(balance), vehicleType(vehicleType), birthYear(birthYear), gender(gender),plateNumber(plateNumber) {}
+
+    virtual double calculateFee() { 
+        cout << "Common Config" << endl;
+        return 0;
+    }
+
+    double getBalance() {
+        return balance;
+    }
+
+    int getVehicleType() {
+        return vehicleType;
+    }
+
+    void setBalance(double balance) {
+        this->balance = balance;
+    }
+
+    void printOwnerInfo() {
+        cout << "Owner Name: " << name << endl;
+        cout << "Birth Year: " << birthYear << endl;
+        cout << "Gender: " << gender << endl;
+        cout << "Plate Number: " << plateNumber << endl;
+    }
+
+    double applyDiscount(double fee) {
+        if (birthYear < 2000) {
+            return fee * 0.9;
+        }
+        return fee;
+    }
+
+    void printPassStatus(double fee, double discountedFee) {
+        if (balance < discountedFee) {
+            cout << "-----------" << endl;
+            cout << "Class: " << vehicleType << endl;
+            cout << "Balance: " << balance << endl;
+            cout << "Normal Fee: " << fee << endl;
+            cout << "Discounted Fee: " << discountedFee << endl;
+            cout << "<<Unauthorized Pass, Insufficient Balance!>>" << endl;
+            cout << "Remaining Balance: " << balance << endl;
+            cout << "-----------" << endl;
+        }
+        else {
+            cout << "-----------" << endl;
+            cout << "Class: " << vehicleType << endl;
+            cout << "Balance: " << balance << endl;
+            cout << "Normal Fee: " << fee << endl;
+            cout << "Discounted Fee: " << discountedFee << endl;
+            cout << "<<Pass Successful>>" << endl;
+            cout << "Remaining Balance: " << balance - discountedFee << endl;
+            cout << "-----------" << endl;
+            balance -= discountedFee;
+        }
+    }
+};
+
+
+class Car : public Vehicle {
+private:
+    string color;
+
+public:
+    Car(string ogsNo, string name, double balance, int vehicleType, int birthYear, string gender, string plateNumber, string color)
+        : Vehicle(ogsNo, name, balance, vehicleType, birthYear, gender, plateNumber), color(color) {}
+
+    double calculateFee() override {
+        return 30;
+    }
+};
+
+class Minibus : public Vehicle {
+private:
+    string route;
+
+public:
+    Minibus(string ogsNo, string name, double balance, int vehicleType, int birthYear, string gender, string plateNumber, string route)
+        : Vehicle(ogsNo, name, balance, vehicleType, birthYear, gender,plateNumber), route(route) {}
+
+    double calculateFee() override {
+        return 30 * 1.5;
+    }
+};
+
+class Bus : public Vehicle {
+private:
+    int capacity;
+
+public:
+    Bus(string ogsNo, string name, double balance, int vehicleType, int birthYear, string gender, string plateNumber, int capacity)
+        : Vehicle(ogsNo, name, balance, vehicleType, birthYear, gender,plateNumber), capacity(capacity) {}
+
+    double calculateFee() override {
+        return 30 * 1.5 * 1.5;
+    }
+};
+
+class Motorcycle : public Vehicle {
+private:
+    double enginePower;
+
+public:
+    Motorcycle(string ogsNo, string name, double balance, int vehicleType, int birthYear, string gender,string plateNumber, double enginePower)
+        : Vehicle(ogsNo, name, balance, vehicleType, birthYear, gender,plateNumber), enginePower(enginePower) {}
+
+    double calculateFee() override {
+        return 30 * 0.5;
+    }
+};
+
+class OGSManager { 
+public:
+    void processVehiclePass(Vehicle& vehicle) {
+        double fee = vehicle.calculateFee();
+        double discountedFee = vehicle.applyDiscount(fee);
+        double balance = vehicle.getBalance();
+
+        vehicle.printPassStatus(fee, discountedFee); 
+
+    }
+};
+
+int main() {
+    Car car("11111", "Muhammed Cihan", 100, 1, 1987, "Male", "21 ABC 21" ,"Red");
+    Minibus minibus("22222", "Baris Aydogdu", 20, 2, 2001, "Male", "34 AC 34", "21DB");
+    Bus bus("33333", "Duygu Selen Ay", 50, 3, 1991, "Female", "41 BB 045", 50);
+    Motorcycle motorcycle("44444", "Gizem Koc", 75, 4, 2000, "Female", "58 SV 058", 150);
+
+    Vehicle* vehicles[] = { &car, &minibus, &bus, &motorcycle };
+
+    OGSManager ogsManager;
+
+    for (Vehicle* vehicle : vehicles) {
+        cout << "Owner Information:" << endl;
+        vehicle->printOwnerInfo();
+        ogsManager.processVehiclePass(*vehicle);
+        cout << endl;
+    }
+
+    system("pause");
+
+
+}
